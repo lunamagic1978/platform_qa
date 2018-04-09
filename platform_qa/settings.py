@@ -91,9 +91,25 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '3306'
+    },
+    'guide': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'guide',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
     }
 }
 
+DATABASE_ROUTERS = ['platform_qa.database_router.DatabaseAppsRouter']
+
+DATABASE_APPS_MAPPING = {
+    # example:
+    # 'app_name':'database_name',
+    'default': 'home',
+    'guide': 'guide',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -134,4 +150,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-STATICFILES_DIRS = [(os.path.join(BASE_DIR, "homepage/static")), ]
+STATICFILES_DIRS = [(os.path.join(BASE_DIR, "homepage/static")), (os.path.join(BASE_DIR, "guide/static")),]

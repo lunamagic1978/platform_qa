@@ -11,6 +11,8 @@
     {% bootstrap_javascript %}
     <link href="/static/css/bootstrap-treeview.css" rel="stylesheet">
     <script src="/static/js/bootstrap-treeview.js"></script>
+    {% block head %}
+    {% endblock %}
     <title>测试质量平台</title>
 </head>
 <body role="document">
@@ -44,7 +46,7 @@
         height: 100%;
     }
     .right-div{
-        padding-left: 300px;
+        margin-left: 300px;
         width: 100%;
         height: 100%;
         overflow-y: scroll;
@@ -61,23 +63,8 @@
         var data = [
           {
             text:"资源导航",
-              href: "http://127.0.0.1:8000/web/webhome",
-            nodes: [
-              {
-                text:"Child 1",
-                nodes: [
-                  {
-                    text:"Grandchild 1"
-                  },
-                  {
-                    text:"Grandchild 2"
-                  }
-                ]
-              },
-              {
-                text:"Child 2"
-              }
-            ]
+              href: "/guide",
+
           },
           {
             text:"web测试",
