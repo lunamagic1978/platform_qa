@@ -52,15 +52,16 @@
         position: fixed;
     }
 </style>
-<!--<div class="right-div">-->
-    <!--{% block content %}-->
-    <!--{% endblock %}-->
-<!--</div>-->
+<div class="right-div">
+    {% block content %}
+    {% endblock %}
+</div>
 <script>
     function getTree() {
         var data = [
           {
-            text:"接口测试",
+            text:"资源导航",
+              href: "http://127.0.0.1:8000/web/webhome",
             nodes: [
               {
                 text:"Child 1",
