@@ -21,7 +21,8 @@ def login_action(request):
         user = auth.authenticate(username=username, password=password)
         if user:
             auth.login(request, user)
-            return HttpResponseRedirect('/index')
+            request.session['username'] = username
+            HttpResponseRedirect('/index')
         else:
             ctx = {"error": "账号或者密码不正确"}
             return render(request, 'login.html', ctx)

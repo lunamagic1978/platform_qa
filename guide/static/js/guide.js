@@ -4,7 +4,15 @@ function displayCreate() {
 function hiddenCreate() {
     $('#createProject').css({display:'none'});
 }
-function editDate() {
-    $('#editbefore').hide();
-    $('#editafter').show();
+function editProject() {
+    $('#guidetree').hide();
+    $('#editGuideProject').show();
+}
+
+function displayCreateGuide() {
+    $('#createGuide').css({display:'flex'});
+}
+
+function hiddenCreateGuide() {
+    $('#createGuide').css({display:'none'});
 }

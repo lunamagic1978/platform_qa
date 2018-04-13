@@ -47,11 +47,15 @@
     }
     .right-div{
         margin-left: 300px;
-        width: 100%;
+        width: calc(100% - 300px);
         height: 100%;
         overflow-y: scroll;
+        overflow-x: scroll;
         top:88px;
         position: fixed;
+    }
+    .tree-button{
+        z-index: 999;
     }
 </style>
 <div class="right-div">
@@ -64,7 +68,6 @@
           {
             text:"资源导航",
               href: "/guide",
-
           },
           {
             text:"web测试",
@@ -80,15 +83,49 @@
           {
             text:"Parent 4"
           },
-          {
-            text:"Parent 5"
+          {    text: "Node 1",
+              icon: "glyphicon glyphicon-stop",
+              image: "something.png",
+              selectedIcon: "glyphicon glyphicon-stop",
+              color: "#000000",
+              backColor: "#FFFFFF",
+              iconColor: "#FFFFFF",
+              selectable: true,
+              checkable: true,
+              state: {
+                // checked: true,
+                // disabled: true,
+                // expanded: true,
+                // selected: true
+              },
+              tags: [
+                'available',
+                  '123',
+                {text:'test', class:'button'}
+              ],
+              tagsClass: 'button',
+              dataAttr: {
+                target: '#tree'
+              },
+              id: 'something',
+              class: 'special extraordinary',
+              hideCheckbox: true,
+                     nodes: [{text: "项目管理", href: "/web/webprojectlist", },
+                     {text: "PO管理", href: "/web/webpageobjecthome"},
+                     { text: "测试用例", href: "/web/webcasehome"},
+                     { text: "全局控件", href: "/web/webglobalcontrolhome"}]
           }
         ];
         return data;
     }
-    $('#tree').treeview({data: getTree(),levels: 1, })
-    $('#tree').on('nodeSelected', function (event, data) {
-        location.href = data.href
+    $('#tree').treeview({data: getTree(),levels: 1, showTags: true, enableLinks: "true",
+                        tagsClass: "button",})
+    $('#tree').on('onNodeRendered', function (event, node) {
+node.$el.append($('<a href="' + node.url + '" class="btn btn-warning btn-xs pull-right prevent-click" target="_blank"><i class="fa fa-rss prevent-click"></i></a>'));
+
+    console.log(event)
+        console.log(data)
+    console.log("222")
     })
 
     $('#tree').on('nodeExpanded', function (event, data) {
