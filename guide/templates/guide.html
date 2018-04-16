@@ -33,8 +33,23 @@
         });
         var jsondata = $.parseJSON(min.responseText);
     $('#guidetree').treeview({data: jsondata.data,levels: 1, enableLinks:true, showTags:true});
-    // $('#guidetree').on('nodeSelected', function (event, data) {
-    //     open(data.href)});
+
+    $('#guidetree').on('nodeSelected', function (event, data) {
+        if (data.href)
+        {
+            open(data.href)
+        };
+         });
+
+    $('#guidetree').on('nodeRendered', function (event, node) {
+
+        node.$el.append($('<button class="btn btn-danger btn-xs" type="button" value="删除" style="display: inline;float: right;\n' +
+            '    margin-right: 10px" onclick="displayCreateGuide()">删除</button>'));
+        node.$el.append($('<button class="btn btn-primary btn-xs" type="button" value="编辑" style="display: inline;float: right;\n' +
+            '    margin-right: 10px" onclick="displayCreateGuide()">编辑</button>'));
+         });
+
+
 </script>
 
 
@@ -150,64 +165,53 @@
 
 
 <!--选择编辑引导项目-->
-    <div id="selecteditproject" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
-    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
-    z-index: 9999;">
-        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
-        class="container">
-            <form method="post" action="" class="form-horizontal">
-                <h3 style="text-align: center">选择需要编辑的引导所在</h3>
-                <div class="form-group" style="margin-top: 40px">
-                    <label class="col-sm-3 control-label">项目名:</label>
-                    <div class="col-sm-7">
-                        {{ create_guide_guide_form.project_name }}
-                    </div>
-                </div>
+    <!--<div id="selecteditproject" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;-->
+    <!--top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;-->
+    <!--z-index: 9999;">-->
+        <!--<div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／-->
+        <!--class="container">-->
+            <!--<form method="post" action="" class="form-horizontal">-->
+                <!--<h3 style="text-align: center">选择需要编辑的引导所在</h3>-->
+                <!--<div class="form-group" style="margin-top: 40px">-->
+                    <!--<label class="col-sm-3 control-label">项目名:</label>-->
+                    <!--<div class="col-sm-7">-->
+                        <!--{{ create_guide_guide_form.project_name }}-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">引导名:</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="id_guide_name" name="guide_name">
-                    </div>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label class="col-sm-3 control-label">引导名:</label>-->
+                    <!--<div class="col-sm-7">-->
+                        <!--<input type="text" class="form-control" id="id_guide_name" name="guide_name">-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">引导链接:</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="id_guide_url" name="guide_url">
-                    </div>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label class="col-sm-3 control-label">引导链接:</label>-->
+                    <!--<div class="col-sm-7">-->
+                        <!--<input type="text" class="form-control" id="id_guide_url" name="guide_url">-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">引导描述:</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="id_guide_description" name="guide_description">
-                    </div>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label class="col-sm-3 control-label">引导描述:</label>-->
+                    <!--<div class="col-sm-7">-->
+                        <!--<input type="text" class="form-control" id="id_guide_description" name="guide_description">-->
+                    <!--</div>-->
+                <!--</div>-->
 
-                <div class="form-group">
-                    <div class="col-sm-2 col-sm-offset-7">
-                        <input type="button" class="form-control btn btn-default" value="取消" name="canncl_createProject", onclick="hiddenCreateGuide()">
-                    </div>
-                    <div class="col-sm-2">
-                        <input type="submit" class="form-control btn btn-primary" value="确定" name="submit_createGuide">
-                    </div>
-                </div>
-                {% csrf_token %}
-            </form>
-        </div>
-    </div>
-
-
-<script>
-        $('#guidetree').on('onNodeSelected', function (event, data) {
-        console.log(data)
-        console.log(data.nodeId)
-            if ($(event.target) == $('.badge')) { // I'm pretty sure this comparison would not work, but you need something like this
-          console.log("11111");
-  }
-    })
-</script>
+                <!--<div class="form-group">-->
+                    <!--<div class="col-sm-2 col-sm-offset-7">-->
+                        <!--<input type="button" class="form-control btn btn-default" value="取消" name="canncl_createProject", onclick="hiddenCreateGuide()">-->
+                    <!--</div>-->
+                    <!--<div class="col-sm-2">-->
+                        <!--<input type="submit" class="form-control btn btn-primary" value="确定" name="submit_createGuide">-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--{% csrf_token %}-->
+            <!--</form>-->
+        <!--</div>-->
+    <!--</div>-->
 
 
 {% endblock %}

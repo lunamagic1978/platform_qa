@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from homepage import views
-from guide import views as guide_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +24,5 @@ urlpatterns = [
     path('login_action/', views.login_action, name='login_action'),
     path('accounts/login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
-    # path('guide/', guide_view.guide, name='guide'),
     path('guide/', include('guide.urls'))
 ]

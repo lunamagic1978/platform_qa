@@ -328,7 +328,7 @@
 		}
 
 		if (typeof (this._options.onNodeChanged) === 'function') {
-			this.$element.on('nodeChanged', this._optonNodeSelectedions.onNodeChanged);
+			this.$element.on('nodeChanged', this._options.onNodeChanged);
 		}
 
 		if (typeof (this._options.onNodeSelected) === 'function') {
@@ -499,6 +499,11 @@
 		if (!node || node.state.disabled) return;
 
 		var classList = target.attr('class') ? target.attr('class').split(' ') : [];
+
+		if(classList.indexOf("prevent-click")!==-1){
+		return;
+	}
+
 		if ((classList.indexOf('expand-icon') !== -1)) {
 			this._toggleExpanded(node, $.extend({}, _default.options));
 		}
@@ -926,8 +931,6 @@
 		// Append .classes to the node
 		node.$el.addClass(node.class);
 
-
-
 		// Set the #id of the node if specified
 		if (node.id) {
 			node.$el.attr('id', node.id);
@@ -1004,15 +1007,6 @@
 		this._setExpanded(node, node.state.expanded);
 		this._setDisabled(node, node.state.disabled);
 		this._setVisible(node, node.state.visible);
-
-				// add by xu
-		node.$el.append(this._template.button.add.clone());
-		node.$el.append(this._template.button.edit.clone());
-		node.$el.append(this._template.button.remove.clone());
-
-		node.$el.mouseenter(function(){
-		node.$el.children('button.btn').removeClass('node-hidden');}).mouseleave(function()
-		{node.$el.children('button.btn').addClass('node-hidden');});
 
 		// Trigger nodeRendered event
 		this._triggerEvent('nodeRendered', node, _default.options);
@@ -1190,12 +1184,7 @@
 		},
 		image: $('<span class="image"></span>'),
 		badge: $('<span></span>'),
-		text: $('<span class="text"></span>'),
-		button: {
-				add: $('<button class="btn icon-plus node-hidden"></button>'),
-				edit: $('<button class="btn icon-edit node-hidden"></button>'),
-				remove: $('<button class="btn icon-remove node-hidden"></button>',)
-			}
+		text: $('<span class="text"></span>')
 	};
 
 	Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'

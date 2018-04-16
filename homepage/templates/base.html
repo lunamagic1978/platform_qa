@@ -67,8 +67,11 @@
         var data = [
           {
             text:"资源导航",
-              href: "/guide",
+              href: "/guide/",
           },
+            {
+                text: "接口测试",
+            },
           {
             text:"web测试",
               href: "http://127.0.0.1:8000/web/webhome",
@@ -118,22 +121,17 @@
         ];
         return data;
     }
-    $('#tree').treeview({data: getTree(),levels: 1, showTags: true, enableLinks: "true",
-                        tagsClass: "button",})
-    $('#tree').on('onNodeRendered', function (event, node) {
-node.$el.append($('<a href="' + node.url + '" class="btn btn-warning btn-xs pull-right prevent-click" target="_blank"><i class="fa fa-rss prevent-click"></i></a>'));
+    $('#tree').treeview({data: getTree(),levels: 1, showTags: true,})
 
-    console.log(event)
-        console.log(data)
-    console.log("222")
-    })
+    $('#tree').on('nodeSelected', function(event, data) {
+        console.log(event)
+        console.log(data.href)
+        console.log($.type(data))
+        if (data.href)
+        {location.href = data.href};
+});
 
-    $('#tree').on('nodeExpanded', function (event, data) {
-        console.log(data)
-        console.log(data.nodeId)
-    })
-   //  var a = $('#tree').treeview('getCollapsed', 0);
-   // console.log(a)
+
 </script>
 {% if messages %}
 <script>
