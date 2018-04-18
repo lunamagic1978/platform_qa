@@ -130,3 +130,27 @@ def project_edit_node(request):
     return JsonResponse({"statue_code": statue_code,
                          "data": data,
                          })
+
+
+@csrf_exempt
+def guide_edit_node(request):
+    statue_code = "200"
+    if request.method == "POST":
+        data = request.POST
+        guide_guide_id = data['guide_guide_id']
+        guide_name = data['guide_name']
+        guide_description = data['guide_description']
+        guide_url = data['guide_url']
+        updater = data['updater']
+        obj = GuideGuide.objects.get(pk=guide_guide_id)
+        obj.guide_name = guide_name
+        obj.guide_description = guide_description
+        obj.guide_url = guide_url
+        obj.updater = updater
+        obj.update_date = datetime.now()
+        obj.save()
+        data = "save success"
+
+    return JsonResponse({"statue_code": statue_code,
+                         "data": data,
+                         })
