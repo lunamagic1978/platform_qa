@@ -1,5 +1,134 @@
 {% extends 'base.html' %}
 
+   {% block head1 %}
+<script>
+    var deleteprojectid;
+    var deleteguideid;
+    var editprojectid;
+    var editguideid
+
+    function editbtn(node) {
+        console.log(node);
+        console.log("editbtn");
+        console.log(node.text);
+        console.log(node.nodeId);
+        if (node.guide_project_id){
+            editprojectid = node.guide_project_id;
+            $('#editGuideProject').css({display:'flex'});
+            $('#edit_project_name').val(node.project_name);
+            $('#edit_project_description').val(node.project_description);
+        }
+        else if (node.guide_guide_id){
+            editguideid = node.guide_guide_id;
+            $('#editGuideGuide').css({display:'flex'});
+        }
+
+        console.log(node.guide_project_id);
+        console.log(node.guide_guide_id);
+}
+    function deletebtn(node) {
+        if (node.guide_project_id){
+            console.log(node.guide_project_id);
+            deleteprojectid = node.guide_project_id;
+            $('#deleteproject').css({display:'flex'});
+            $('#deleteproject_content').text("是否要删除项目:" + node.project_name)
+        }
+        else if (node.guide_guide_id){
+            console.log(node.guide_guide_id);
+            deleteguideid = node.guide_guide_id;
+            $('#deleteguide').css({display:'flex'});
+            $('#deleteguide_content').text("是否要删除引导:" + node.guide_name)
+        }
+    }
+
+    function deleteprojectbtn() {
+        var settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "/guide/deletenode/",
+              "method": "POST",
+              "headers": {
+                "content-type": "application/x-www-form-urlencoded",
+                "cache-control": "no-cache",
+              },
+              "data": {
+                "guide_project_id": deleteprojectid,
+                "guide_guide_id": ""
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+
+    }
+
+    function editprojectbtn() {
+        var updater = '{{ username|safe }}';
+        var project_name = $('#edit_project_name').val();
+        var project_description = $('#edit_project_description').val();
+        var settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "/guide/editprojectnode/",
+              "method": "POST",
+              "headers": {
+                "content-type": "application/x-www-form-urlencoded",
+                "cache-control": "no-cache",
+              },
+              "data": {
+                "guide_project_id": editprojectid,
+                "project_name": project_name,
+                "project_description": project_description,
+                "updater": updater
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+    }
+
+    function deleteguidebtn() {
+        var settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "/guide/guidedeletenode/",
+              "method": "POST",
+              "headers": {
+                "content-type": "application/x-www-form-urlencoded",
+                "cache-control": "no-cache",
+              },
+              "data": {
+                "guide_project_id": "",
+                "guide_guide_id": deleteguideid
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+
+    }
+
+    function hiddenDeleteProject() {
+        $('#deleteproject').css({display:'none'});
+    }
+    function hiddenDeleteGuide() {
+        $('#deleteguide').css({display:'none'});
+    }
+
+    function hiddenEditProject() {
+        $('#editGuideProject').css({display:'none'});
+    }
+
+    function hiddenEditGuide() {
+        $('#editGuideGuide').css({display:'none'});
+    }
+
+</script>
+    {% endblock %}
+
 
 {% block head %}
 <script src="/static/js/guide.js"></script>
@@ -32,7 +161,7 @@
             async: false,
         });
         var jsondata = $.parseJSON(min.responseText);
-    $('#guidetree').treeview({data: jsondata.data,levels: 1, enableLinks:true, showTags:true});
+    $('#guidetree').treeview({data: jsondata.data,levels: 1, showTags:true, expandbtnshow:true});
 
     $('#guidetree').on('nodeSelected', function (event, data) {
         if (data.href)
@@ -40,15 +169,6 @@
             open(data.href)
         };
          });
-
-    $('#guidetree').on('nodeRendered', function (event, node) {
-
-        node.$el.append($('<button class="btn btn-danger btn-xs" type="button" value="删除" style="display: inline;float: right;\n' +
-            '    margin-right: 10px" onclick="displayCreateGuide()">删除</button>'));
-        node.$el.append($('<button class="btn btn-primary btn-xs" type="button" value="编辑" style="display: inline;float: right;\n' +
-            '    margin-right: 10px" onclick="displayCreateGuide()">编辑</button>'));
-         });
-
 
 </script>
 
@@ -90,7 +210,7 @@
 
 
 <!--编辑项目-->
-    <div id="editGuideProject" style="display: none" >
+    <div style="display: none" >
         <form method="post" action="">
             {% csrf_token %}
         <table border="1" class="table table-striped table-bordered table-hover table-condensed table-responsive", style="width: 100%">
@@ -164,54 +284,124 @@
     </div>
 
 
-<!--选择编辑引导项目-->
-    <!--<div id="selecteditproject" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;-->
-    <!--top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;-->
-    <!--z-index: 9999;">-->
-        <!--<div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／-->
-        <!--class="container">-->
-            <!--<form method="post" action="" class="form-horizontal">-->
-                <!--<h3 style="text-align: center">选择需要编辑的引导所在</h3>-->
-                <!--<div class="form-group" style="margin-top: 40px">-->
-                    <!--<label class="col-sm-3 control-label">项目名:</label>-->
-                    <!--<div class="col-sm-7">-->
-                        <!--{{ create_guide_guide_form.project_name }}-->
-                    <!--</div>-->
-                <!--</div>-->
+<!--删除引导-->
+    <div id="deleteguide" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form method="post" action="" class="form-horizontal">
+                <div >
+                    <h3 id="deleteguide_content" style="text-align: center"></h3>
+                </div>
 
-                <!--<div class="form-group">-->
-                    <!--<label class="col-sm-3 control-label">引导名:</label>-->
-                    <!--<div class="col-sm-7">-->
-                        <!--<input type="text" class="form-control" id="id_guide_name" name="guide_name">-->
-                    <!--</div>-->
-                <!--</div>-->
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消"  onclick="hiddenDeleteGuide()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定" onclick="deleteguidebtn()">
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
 
-                <!--<div class="form-group">-->
-                    <!--<label class="col-sm-3 control-label">引导链接:</label>-->
-                    <!--<div class="col-sm-7">-->
-                        <!--<input type="text" class="form-control" id="id_guide_url" name="guide_url">-->
-                    <!--</div>-->
-                <!--</div>-->
+    </div>
 
-                <!--<div class="form-group">-->
-                    <!--<label class="col-sm-3 control-label">引导描述:</label>-->
-                    <!--<div class="col-sm-7">-->
-                        <!--<input type="text" class="form-control" id="id_guide_description" name="guide_description">-->
-                    <!--</div>-->
-                <!--</div>-->
+<!--删除项目-->
+    <div id="deleteproject" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form  method="post" action="" class="form-horizontal">
+                <div >
+                    <h3 id="deleteproject_content" style="text-align: center"></h3>
+                </div>
 
-                <!--<div class="form-group">-->
-                    <!--<div class="col-sm-2 col-sm-offset-7">-->
-                        <!--<input type="button" class="form-control btn btn-default" value="取消" name="canncl_createProject", onclick="hiddenCreateGuide()">-->
-                    <!--</div>-->
-                    <!--<div class="col-sm-2">-->
-                        <!--<input type="submit" class="form-control btn btn-primary" value="确定" name="submit_createGuide">-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--{% csrf_token %}-->
-            <!--</form>-->
-        <!--</div>-->
-    <!--</div>-->
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消"  onclick="hiddenDeleteProject()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定"  onclick="deleteprojectbtn()">
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
 
+    </div>
+
+<!--编辑项目-->
+    <div id="editGuideProject" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form method="post" action="" class="form-horizontal">
+                <h3 style="text-align: center">编辑项目</h3>
+                <div class="form-group" style="margin-top: 40px">
+                    <label class="col-sm-3 control-label">项目名:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control"  id="edit_project_name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">项目描述:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control"  id="edit_project_description">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消" onclick="hiddenEditProject()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定" onclick="editprojectbtn()">
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+
+<!--编辑引导-->
+    <div id="editGuideGuide" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form method="post" action="" class="form-horizontal">
+                <h3 style="text-align: center">编辑引导</h3>
+                <div class="form-group" style="margin-top: 40px">
+                    <label class="col-sm-3 control-label">项目名:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control"  id="edit_guide_name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">项目描述:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control"  id="edit_guide_description">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消" onclick="hiddenEditGuide()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定" >
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
 
 {% endblock %}

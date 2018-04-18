@@ -49,8 +49,8 @@
 		borderColor: undefined,
 		changedNodeColor: '#39A5DC',
 		onhoverColor: '#F5F5F5',
-		selectedColor: '#FFFFFF',
-		selectedBackColor: '#428bca',
+		selectedColor: '#428bca',
+		selectedBackColor: '#FFFFFF',
 		searchResultColor: '#D9534F',
 		searchResultBackColor: undefined,
 
@@ -69,6 +69,7 @@
 		hierarchicalCheck: false,
 		propagateCheckEvent: false,
 		wrapNodeText: false,
+		expandbtnshow: false,
 
 		// Event handlers
 		onLoading: undefined,
@@ -87,6 +88,7 @@
 		onNodeSelected: undefined,
 		onNodeUnchecked: undefined,
 		onNodeUnselected: undefined,
+		onEidtButtonClicked: undefined,
 
 		onSearchComplete: undefined,
 		onSearchCleared: undefined
@@ -339,6 +341,10 @@
 			this.$element.on('nodeUnchecked', this._options.onNodeUnchecked);
 		}
 
+		if (typeof (this._options.onEidtButtonClicked) === 'function') {
+			this.$element.on('eidtButtonClicked', this._options.onEidtButtonClicked);
+		}
+
 		if (typeof (this._options.onNodeUnselected) === 'function') {
 			this.$element.on('nodeUnselected', this._options.onNodeUnselected);
 		}
@@ -380,6 +386,8 @@
 		level += 1;
 		done = done || [];
 
+		// console.log(this._options.data)
+
 		var parent = node;
 		$.each(node.nodes, $.proxy(function (index, node) {
 			var deferred = new $.Deferred();
@@ -399,10 +407,19 @@
 			// parentId : transversing up the tree
 			node.parentId = parent.nodeId;
 
+            // console.log(node);
+            // console.log(node.nodeId);
+            // console.log(node.level);
+            // console.log(node.index);
+            // if (node.level == 1){
+            //     node.guide_projecrt_id
+            // }
+
 			// if not provided set selectable default value
 			if (!node.hasOwnProperty('selectable')) {
 				node.selectable = true;
 			}
+
 
 			// if not provided set checkable default value
 			if (!node.hasOwnProperty('checkable')) {
@@ -500,7 +517,13 @@
 
 		var classList = target.attr('class') ? target.attr('class').split(' ') : [];
 
-		if(classList.indexOf("prevent-click")!==-1){
+		if(classList.indexOf("prevent-clickedit")!==-1){
+			editbtn(node);
+		return;
+	}
+
+		if(classList.indexOf("prevent-clickdel")!==-1){
+			deletebtn(node);
 		return;
 	}
 
@@ -1000,6 +1023,20 @@
 			}, this));
 		}
 
+		// add by xumin at 2018/04/16
+		if (this._options.expandbtnshow){
+			node.$el.append(this._template.button.remove.clone());
+			node.$el.append(this._template.button.edit.clone());
+
+			node.$el.mouseenter(function(){
+			node.$el.children('button.btn').removeClass('node-hidden');
+			}).mouseleave(function(){
+			node.$el.children('button.btn').addClass('node-hidden');
+			});
+		}
+
+
+
 		// Set various node states
 		this._setSelected(node, node.state.selected);
 		this._setChecked(node, node.state.checked);
@@ -1184,8 +1221,12 @@
 		},
 		image: $('<span class="image"></span>'),
 		badge: $('<span></span>'),
-		text: $('<span class="text"></span>')
-	};
+		text: $('<span class="text"></span>'),
+		button: {
+			remove: $('<button class="btn btn-danger btn-xs node-hidden prevent-clickdel" type="button" value="删除" style="float: right;margin-right: 10px">删除</button>'),
+			edit: $('<button class="btn btn-primary btn-xs node-hidden prevent-clickedit" type="button" value="编辑" style="float: right;margin-right: 10px">编辑</button>'),
+			}
+				};
 
 	Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'
 
