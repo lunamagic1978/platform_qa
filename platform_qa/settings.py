@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'homepage',
     'bootstrap3',
     'guide',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -99,7 +100,15 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '3306'
-    }
+    },
+    'api': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'api',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
+    },
 }
 
 DATABASE_ROUTERS = ['platform_qa.database_router.DatabaseAppsRouter']
@@ -109,6 +118,7 @@ DATABASE_APPS_MAPPING = {
     # 'app_name':'database_name',
     'default': 'home',
     'guide': 'guide',
+    'api': 'api',
 }
 
 # Password validation

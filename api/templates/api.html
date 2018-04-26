@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+
+{% block head1 %}
+<script>
+    var api_project_id;
+    var api_api_id;
+
+    function apiprojecteditbtn(node) {
+        api_project_id = node.api_project_id;
+        $('#editApiProject').css({display:'flex'});
+        $('#id_edit_api_project_name').val(node.api_project_name);
+        $('#id_edit_api_project_description').val(node.api_project_description);
+        $('#id_edit_api_project_host').val(node.api_project_host);
+        $('#id_edit_api_project_port').val(node.api_project_port);
+
+        console.log(api_project_id)
+    }
+    
+
+    function saveapiprojecteditbtn() {
+        var updater = '{{ username|safe }}';
+        var api_project_name = $('#id_edit_api_project_name').val();
+        var api_project_description = $('#id_edit_api_project_description').val();
+        var api_project_host = $('#id_edit_api_project_host').val();
+        var api_project_port = $('#id_edit_api_project_port').val();
+        var settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "/api/editprojectnode/",
+              "method": "POST",
+              "headers": {
+                "content-type": "application/x-www-form-urlencoded",
+                "cache-control": "no-cache",
+              },
+              "data": {
+                  "api_project_id": api_project_id,
+                  "api_project_name": api_project_name,
+                  "api_project_description": api_project_description,
+                  "updater": updater,
+                  "api_project_host": api_project_host,
+                  "api_project_port": api_project_port,
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+
+    }
+    
+    function apiapicreatebtn(node) {
+        api_project_id = node.api_project_id;
+        $('#createApiApi').css({display:'flex'});
+
+    }
+    
+    function saveapiapicreatebtn() {
+        var creater = '{{ username|safe }}';
+        var api_api_name = $('#id_api_api_name').val();
+        var api_path = $('#id_api_path').val();
+        var api_protocol = $('#id_api_protocol').val();
+        var api_method = $('#id_api_method').val();
+        var api_post_method = $('#id_api_post_method').val();
+        var settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "/api/createapinode/",
+              "method": "POST",
+              "headers": {
+                "content-type": "application/x-www-form-urlencoded",
+                "cache-control": "no-cache",
+              },
+              "data": {
+                  "api_project_id": api_project_id,
+                  "api_api_name": api_api_name,
+                  "api_path": api_path,
+                  "creater": creater,
+                  "api_protocol": api_protocol,
+                  "api_method": api_method,
+                  "api_post_method": api_post_method,
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        
+    }
+
+    function apiapieditbtn(node) {
+        api_api_id = node.api_api_id
+        $('#editApiApi').css({display: 'flex'});
+        $('#edit_api_api_name').html(node.api_project_name);
+        $('#id_edit_api_api_name').val(node.api_api_name);
+        $('#id_edit_api_path').val(node.api_path);
+        $('#id_edit_api_protocol').val(node.api_protocol);
+        $('#id_edit_api_method').val(node.api_method);
+        if (node.api_method == "POST"){
+            $('#edit_api_post_method').css({display: 'flex'});
+        }else{
+            $('#edit_api_post_method').css({display: 'none'});
+        }
+
+    }
+
+
+    function saveapiapieditbtn() {
+        var updater = '{{ username|safe }}';
+        var edit_api_api_name = $('#id_edit_api_api_name').val();
+        var edit_api_path = $('#id_edit_api_path').val();
+        var edit_api_protocol = $('#id_edit_api_protocol').val();
+        var edit_api_method = $('#id_edit_api_method').val();
+        var edit_api_post_method = $('#id_edit_api_post_method').val();
+        var settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "/api/editapinode/",
+              "method": "POST",
+              "headers": {
+                "content-type": "application/x-www-form-urlencoded",
+                "cache-control": "no-cache",
+              },
+              "data": {
+                  "edit_api_api_id": api_api_id,
+                  "edit_api_api_name": edit_api_api_name,
+                  "edit_api_path": edit_api_path,
+                  "edit_updater": updater,
+                  "edit_api_protocol": edit_api_protocol,
+                  "edit_api_method": edit_api_method,
+                  "edit_api_post_method": edit_api_post_method,
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+
+    }
+
+    function hiddeneditApiProject() {
+        $('#editApiProject').css({display:'none'});
+    }
+
+    function hiddencreateApiApi() {
+        $('#createApiApi').css({display:'none'});
+    }
+
+    function hiddeneditApiApi() {
+        $('#editApiApi').css({display:'none'});
+    }
+
+
+
+
+</script>
+{% endblock %}
+
+
+{% block breadcrumb_button %}
+    <li class="active">接口测试</li>
+    <input class="btn btn-danger btn-xs" type="button" value="创建新项目" style="float: right; margin-right: 10px"
+           onclick="displayCreateApiProject()">
+{% endblock %}
+
+
+
+{% block content %}
+
+<!--导航树-->
+<div id="apitree"></div>
+<script>
+        var min = $.ajax(
+        {
+            type: 'get',
+            url: '/api/apitree/',
+            data: "{}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+        });
+        var jsondata = $.parseJSON(min.responseText);
+    $('#apitree').treeview({data: jsondata.data,levels: 1, showTags:true, expandbtnshow:true, btnSet:"api"});
+
+    $('#apitree').on('nodeSelected', function (event, data) {
+        console.log("node selected")
+        if (data.href){
+            console.log(data.href)
+            location.href = data.href
+        }
+    })
+</script>
+
+
+<!--创建项目-->
+    <div id="createApiProject" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form method="post" action="" class="form-horizontal">
+                <h3 style="text-align: center">添加新项目</h3>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">项目名:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_project_form.api_project_name }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Host:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_project_form.api_project_host }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Port:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_project_form.api_project_port }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" >项目描述:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_project_form.api_project_description }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消" name="canncl_createApiProject", onclick="hiddenCreateApiProject()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定" name="submit_createApiProject">
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+
+<!--编辑项目-->
+    <div id="editApiProject" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form method="post" action="" class="form-horizontal">
+                <h3 style="text-align: center">编辑项目</h3>
+                <div class="form-group" style="margin-top: 40px">
+                    <label class="col-sm-3 control-label">项目名:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_project_form.edit_api_project_name }}
+                    </div>
+                </div>
+
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">Host:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_project_form.edit_api_project_host }}
+                    </div>
+                </div>
+
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">Port:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_project_form.edit_api_project_port }}
+                    </div>
+                </div>
+
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label" >项目描述:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_project_form.edit_api_project_description }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消" onclick="hiddeneditApiProject()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定" onclick="saveapiprojecteditbtn()">
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+
+
+<!--创建接口-->
+<div id="createApiApi" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form method="post" action="" class="form-horizontal">
+                <h3 id='api_title_content' style="text-align: center">创建新接口</h3>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">项目名:</label>
+                    <div class="col-sm-7">
+                        <label id="create_api_project_name" class="form-control"></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">接口名:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_api_form.api_api_name }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Path:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_api_form.api_path }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">请求协议:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_api_form.api_protocol }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">请求方法:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_api_form.api_method }}
+                    </div>
+                </div>
+
+                <div class="form-group" id="api_post_method" style="display: none">
+                    <label class="col-sm-3 control-label">POST方法:</label>
+                    <div class="col-sm-7">
+                        {{  create_api_api_form.api_post_method }}
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消" name="canncl_createApiProject", onclick="hiddencreateApiApi()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定" name="submit_createApiProject", onclick="saveapiapicreatebtn()">
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+</div>
+
+
+<!--编辑接口-->
+<div id="editApiApi" style="width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); position: fixed;
+    top: 0; left: 0; display: none; justify-content: center; align-content: center; align-items: center;
+    z-index: 9999;">
+        <div style="border-radius: 5px; background-color: #fff; max-width: 600px; min-width: 200px; padding: 30px 20px;" ／
+        class="container">
+            <form method="post" action="" class="form-horizontal">
+                <h3 style="text-align: center">编辑接口</h3>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">项目名:</label>
+                    <div class="col-sm-7">
+                        <label id="edit_api_api_name" class="form-control"></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">接口名:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_api_form.edit_api_api_name  }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Path:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_api_form.edit_api_path  }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">请求协议:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_api_form.edit_api_protocol}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">请求方法:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_api_form.edit_api_method}}
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: none" id="edit_api_post_method">
+                    <label class="col-sm-3 control-label">POST方法:</label>
+                    <div class="col-sm-7">
+                        {{  edit_api_api_form.edit_api_post_method}}
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-7">
+                        <input type="button" class="form-control btn btn-default" value="取消"  onclick="hiddeneditApiApi()">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="form-control btn btn-primary" value="确定"  onclick="saveapiapieditbtn()">
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+</div>
+
+<script>
+    function displayCreateApiProject() {
+    $('#createApiProject').css({display:'flex'});
+}
+
+    function hiddenCreateApiProject() {
+    $('#createApiProject').css({display:'none'});
+}
+
+    $('#id_api_method').change(function () {
+            var api_method = ($(this).children('option:selected').val());
+            console.log(api_method);
+            if (api_method == "POST"){
+                $('#api_post_method').show();
+            }
+            else{
+                $('#api_post_method').hide();
+            };
+        })
+
+    $('#id_edit_api_method').change(function () {
+            var edit_api_method = ($(this).children('option:selected').val());
+            if (edit_api_method == "POST"){
+                $('#edit_api_post_method').show();
+            }
+            else{
+                $('#edit_api_post_method').hide();
+            };
+        })
+
+</script>
+{% endblock %}

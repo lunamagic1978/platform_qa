@@ -180,13 +180,13 @@
             async: false,
         });
         var jsondata = $.parseJSON(min.responseText);
-    $('#guidetree').treeview({data: jsondata.data,levels: 1, showTags:true, expandbtnshow:true});
+    $('#guidetree').treeview({data: jsondata.data,levels: 1, showTags:true, expandbtnshow:true, btnSet:"guide"});
 
     $('#guidetree').on('nodeSelected', function (event, data) {
-        if (data.href)
-        {
+        if (data.href) {
+            console.log(data.href)
             open(data.href)
-        };
+        }
          });
 
 </script>

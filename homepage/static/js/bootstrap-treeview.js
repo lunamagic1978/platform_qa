@@ -53,6 +53,7 @@
 		selectedBackColor: '#FFFFFF',
 		searchResultColor: '#D9534F',
 		searchResultBackColor: undefined,
+		btnSet: undefined,
 
 		highlightSelected: true,
 		highlightSearchResults: true,
@@ -517,6 +518,8 @@
 
 		var classList = target.attr('class') ? target.attr('class').split(' ') : [];
 
+
+		// add by xumin at 2018/04/16
 		if(classList.indexOf("prevent-clickedit")!==-1){
 			editbtn(node);
 		return;
@@ -526,6 +529,22 @@
 			deletebtn(node);
 		return;
 	}
+
+		if(classList.indexOf("prevent-clickapiprojectedit")!==-1){
+			apiprojecteditbtn(node);
+		return;
+	}
+
+		if(classList.indexOf("prevent-clickapicreate")!==-1){
+			apiapicreatebtn(node);
+		return;
+	}
+
+		if(classList.indexOf("prevent-clickapiapiedit")!==-1){
+			apiapieditbtn(node);
+		return;
+	}
+
 
 		if ((classList.indexOf('expand-icon') !== -1)) {
 			this._toggleExpanded(node, $.extend({}, _default.options));
@@ -1025,14 +1044,40 @@
 
 		// add by xumin at 2018/04/16
 		if (this._options.expandbtnshow){
-			node.$el.append(this._template.button.remove.clone());
-			node.$el.append(this._template.button.edit.clone());
+			if (this._options.btnSet === "guide"){
+				node.$el.append(this._template.button.remove.clone());
+				node.$el.append(this._template.button.edit.clone());
+
+
+			}
+			else if (this._options.btnSet === "api"){
+				if (node.api_api_id){
+					node.$el.append(this._template.label.api_protocol.clone());
+					node.$el.append(this._template.label.api_method.clone());
+					if (node.api_method == "POST"){
+						node.$el.append(this._template.label.api_post_method.clone());
+						node.$el.find('.api_post_method').text(node.api_post_method);
+					}
+					node.$el.find('.api_method').text(node.api_method);
+					node.$el.find('.api_protocol').text(node.api_protocol);
+					node.$el.append(this._template.button.apiapiedit.clone());
+
+
+				}else{
+					node.$el.append(this._template.button.apiprojectedit.clone());
+					node.$el.append(this._template.button.apiapicreate.clone());
+
+				}
+
+
+			}
 
 			node.$el.mouseenter(function(){
-			node.$el.children('button.btn').removeClass('node-hidden');
-			}).mouseleave(function(){
-			node.$el.children('button.btn').addClass('node-hidden');
-			});
+					node.$el.children('button.btn').removeClass('node-hidden');
+				}).mouseleave(function(){
+					node.$el.children('button.btn').addClass('node-hidden');
+				});
+
 		}
 
 
@@ -1209,6 +1254,7 @@
 		return this._css + style;
 	};
 
+	// xumin
 	Tree.prototype._template = {
 		tree: $('<ul class="list-group"></ul>'),
 		node: $('<li class="list-group-item"></li>'),
@@ -1222,9 +1268,17 @@
 		image: $('<span class="image"></span>'),
 		badge: $('<span></span>'),
 		text: $('<span class="text"></span>'),
+		label: {
+			api_method: $('<button class="api_method btn-danger btn-xs" style=" position: absolute; left: 870px;">api_method</button>'),
+			api_protocol: $('<button class="api_protocol btn-primary btn-xs" style="position: absolute; left: 800px;">api_protocol</button>'),
+			api_post_method: $('<button class="api_post_method btn-default btn-xs" style="position: absolute; left: 930px;">api_post_method</button>'),
+		},
 		button: {
 			remove: $('<button class="btn btn-danger btn-xs node-hidden prevent-clickdel" type="button" value="删除" style="float: right;margin-right: 10px">删除</button>'),
 			edit: $('<button class="btn btn-primary btn-xs node-hidden prevent-clickedit" type="button" value="编辑" style="float: right;margin-right: 10px">编辑</button>'),
+			apiprojectedit: $('<button class="btn btn-primary btn-xs node-hidden prevent-clickapiprojectedit" type="button" value="编辑" style="float: right;margin-right: 10px">编辑</button>'),
+			apiapicreate: $('<button class="btn btn-danger btn-xs node-hidden prevent-clickapicreate" type="button" value="编辑" style="float: right;margin-right: 10px">新建</button>'),
+			apiapiedit: $('<button class="btn btn-primary btn-xs node-hidden prevent-clickapiapiedit" type="button" value="编辑" style="float: right;margin-right: 10px">编辑</button>'),
 			}
 				};
 
